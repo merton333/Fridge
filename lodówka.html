@@ -1,0 +1,636 @@
+
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moja Lodówka - Co mogę ugotować?</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* 1. Ustawienia globalne i tło (CIEPLEJSZE) */
+        body {
+            font-family: 'Poppins', Arial, sans-serif; 
+            background-color: #FFFBF5; /* CIEPŁY: Bardzo jasny beż */
+            color: #4B3F35; /* CIEPŁY: Ciemny Brąz/Szary */
+            line-height: 1.7; 
+            margin: 0;
+            padding: 0;
+        }
+
+        /* 2. Nagłówek (CIEPLEJSZY) */
+        header {
+            background-color: #FF7043; /* CIEPŁY: Ciepła Pomarańcz */
+            color: white;
+            padding: 25px 15px; 
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            position: relative; 
+            overflow: hidden; 
+        }
+
+        header h1 {
+            margin-top: 0;
+            font-size: 2em;
+        }
+
+        /* NOWE STYLE DLA IKON SEZONOWYCH */
+        #sezonowe-ikony {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            pointer-events: none; 
+            padding: 0 20px;
+            font-size: 3em;
+            opacity: 0.7; 
+            z-index: 0;
+        }
+
+        #sezonowe-ikony span {
+            display: block;
+        }
+        
+        /* 3. Układ główny i sekcje */
+        main {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        section {
+            background-color: white;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 12px; 
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); 
+        }
+
+        /* 4. Lista składników (sekcja 1) */
+        #wprowadzanie-skladnikow {
+            margin-bottom: 15px;
+        }
+
+        button {
+            background-color: #689F38; /* CIEPŁY: Ciemna Zieleń Oliwna (Akcja) */
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px; 
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+            font-weight: 600;
+        }
+
+        button:hover {
+            background-color: #558B2F; 
+            transform: translateY(-1px);
+        }
+
+        /* 5. Listy składników i przepisów */
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        ul li {
+            background-color: #fafafa;
+            padding: 10px;
+            margin-bottom: 7px;
+            border-left: 6px solid #ccc;
+            border-radius: 6px;
+        }
+
+        /* Wyróżnienie gotowych dań i brakujących składników */
+        #dania-gotowe li {
+            border-left-color: #8BC34A; /* CIEPŁY: Limonkowa Zieleń */
+            font-weight: 600;
+        }
+
+        #dania-brakujace li {
+            border-left-color: #FFB74D; /* CIEPŁY: Łagodna Pomarańcz */
+        }
+        
+        #dania-gotowe a, #dania-brakujace a {
+            color: #4B3F35;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* 6. Baza Przepisów */
+        #baza-przepisow article {
+            border: 1px dashed #ccc;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        hr {
+            border: 0;
+            height: 1px;
+            background-color: #ddd;
+            margin: 30px 0;
+        }
+        
+        /* Style dla MODALNEGO OKNA WYBORU */
+        .hidden-modal {
+            display: none !important;
+        }
+
+        #modal-wyboru-skladnikow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 25px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 400px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        /* Styl dla opcji checkboxów */
+        #opcje-skladnikow label {
+            display: block;
+            margin: 8px 0;
+            cursor: pointer;
+        }
+        
+        /* Styl dla przełącznika języka */
+        #language-switcher {
+            margin-bottom: 10px;
+        }
+
+        #language-switcher button {
+            padding: 5px 10px;
+            background-color: #fff;
+            color: #FF7043; /* Kolor z nagłówka */
+            border: 1px solid #FF7043;
+            border-radius: 4px;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        #language-switcher .active-lang {
+            font-weight: bold;
+            opacity: 1;
+            background-color: #FF7043;
+            color: white;
+        }
+        
+        /* Styl dla stopki i licznika */
+        footer {
+            text-align: center;
+            padding: 15px;
+            background-color: #EFEBE9; /* CIEPŁY: Jasny Beż */
+            color: #797979;
+            font-size: 0.9em;
+            border-top: 1px solid #ccc;
+            margin-top: 30px;
+        }
+
+        #licznik-uzytkownikow {
+            margin-top: 5px;
+            font-style: italic;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🍳 Moja Lodówka 🥗</h1>
+        <div id="sezonowe-ikony"></div> 
+        <div id="language-switcher">
+            <button onclick="zmienJezyk('pl')" id="lang-pl" class="active-lang">PL</button>
+            <button onclick="zmienJezyk('en')" id="lang-en">EN</button>
+        </div>
+        <p id="header-slogan" data-i18n="header-slogan">Wprowadź swoje składniki i zobacz, co możesz ugotować!</p>
+    </header>
+
+    <main>
+        
+        <section id="lista-lodowki">
+            <h2 data-i18n="section1-title">1. Co masz w lodówce?</h2>
+            
+            <div id="wprowadzanie-skladnikow">
+                <button onclick="otworzListeWyboru()" data-i18n="button-select">Zaznacz, co masz w domu</button>
+            </div>
+            
+            <h3 data-i18n="subtitle-zapasy">Aktualne zapasy:</h3>
+            
+            <ul id="skladniki-w-lodowce">
+            </ul>
+
+            <div id="modal-wyboru-skladnikow" class="hidden-modal">
+                <div class="modal-content">
+                    <h3 data-i18n="modal-title">Wybierz swoje składniki:</h3>
+                    <div id="opcje-skladnikow">
+                    </div>
+                    <button onclick="zamknijListeWyboru()" data-i18n="button-done">Gotowe</button>
+                </div>
+            </div>
+        </section>
+
+        <hr>
+
+        <section id="sugerowane-przepisy">
+         
+            <h2 data-i18n="section2-title">2. Co możesz zrobić?</h2>
+            <p><strong data-i18n="subtitle-ready">Dania, które zrobisz TERAZ:</strong></p>
+            <ul id="dania-gotowe">
+            </ul>
+
+            <p><strong data-i18n="subtitle-missing">Dania z brakującymi składnikami:</strong></p>
+            <ul id="dania-brakujace">
+            </ul>
+   
+        </section>
+
+        <hr>
+        
+        <section id="baza-przepisow">
+            <h2 data-i18n="section3-title">3. Baza Przepisów</h2>
+            <p>Pełna lista dań, które aplikacja zna. (Tłumaczone przez JS)</p>
+            
+            <article id="Jajecznica">
+                <h3>Jajecznica</h3>
+                <p><strong>Wymagane składniki:</strong> Jajka, Masło, Sól</p>
+                <p>Instrukcja: Rozbij jajka, rozpuść masło, smaż. Idealne na szybkie śniadanie.</p>
+            </article>
+
+            <article id="Naleśniki">
+                <h3>Naleśniki</h3>
+                <p><strong>Wymagane składniki:</strong> Jajka, Mleko, Mąka, Cukier</p>
+                <p>Instrukcja: Wymieszaj składniki na gładkie ciasto i smaż na cienko. Podawaj z dżemem lub serem.</p>
+            </article>
+            
+            <article id="Kanapka-z-Serem">
+                <h3>Kanapka z Serem</h3>
+                <p><strong>Wymagane składniki:</strong> Chleb, Ser, Masło</p>
+                <p>Instrukcja: Najprostszy posiłek na świecie. Smaruj, kładź, jedz.</p>
+            </article>
+            
+            <article id="Omlet-Warzywny">
+                <h3>Omlet Warzywny</h3>
+                <p><strong>Wymagane składniki:</strong> Jajka, Cebula, Papryka, Ser</p>
+                <p>Instrukcja: Idealny na szybki obiad. Usmaż warzywa, zalej jajkami i posyp serem.</p>
+            </article>
+
+             <article id="Spaghetti-Bolognese">
+                <h3>Spaghetti Bolognese</h3>
+                <p><strong>Wymagane składniki:</strong> Makaron, Mięso mielone, Pomidory, Cebula, Czosnek, Olej</p>
+                <p>Instrukcja: Klasyk! Smaż mięso z warzywami, dodaj pomidory i podawaj z makaronem.</p>
+            </article>
+
+            <article id="Ryż-z-Kurczakiem">
+                <h3>Ryż z Kurczakiem</h3>
+                <p><strong>Wymagane składniki:</strong> Ryż, Kurczak, Cebula, Olej</p>
+                <p>Instrukcja: Szybki, sycący obiad. Smaż kurczaka z cebulą i podawaj z ugotowanym ryżem.</p>
+            </article>
+
+            <article id="Zupa-Pomidorowa">
+                <h3>Zupa Pomidorowa</h3>
+                <p><strong>Wymagane składniki:</strong> Pomidory, Cebula, Olej, Makaron</p>
+                <p>Instrukcja: Podduś cebulę, dodaj pomidory i wodę. Dopraw. Podawaj z makaronem.</p>
+            </article>
+
+            <article id="Ryż-z-Warzywami">
+                <h3>Ryż z Warzywami</h3>
+                <p><strong>Wymagane składniki:</strong> Ryż, Marchew, Brokuł, Olej</p>
+                <p>Instrukcja: Ugotuj ryż. Podsmaż warzywa na oleju. Wymieszaj i dopraw do smaku.</p>
+            </article>
+            
+            <article id="Tosty-z-Serem-i-Szynką">
+                <h3>Tosty z Serem i Szynką</h3>
+                <p><strong>Wymagane składniki:</strong> Chleb, Ser, Szynka, Masło</p>
+                <p>Instrukcja: Przygotuj kanapki z serem i szynką. Smaż na maśle, aż będą złociste.</p>
+            </article>
+        </section>
+
+    </main>
+    
+    <footer>
+        <p>&copy; 2025 Moja Lodówka Project</p>
+        <p id="licznik-uzytkownikow">
+            <small>Liczba aktywnych lodówek: <span id="counter-value">...</span></small>
+        </p>
+    </footer>
+
+    <script>
+        // Obiekt tłumaczeń dla tekstu interfejsu
+        const TRANSLATIONS = {
+            'pl': {
+                'header-slogan': 'Wprowadź swoje składniki i zobacz, co możesz ugotować!',
+                'section1-title': '1. Co masz w lodówce?',
+                'button-select': 'Zaznacz, co masz w domu',
+                'subtitle-zapasy': 'Aktualne zapasy:',
+                'modal-title': 'Wybierz swoje składniki:',
+                'button-done': 'Gotowe',
+                'section2-title': '2. Co możesz zrobić?',
+                'subtitle-ready': 'Dania, które zrobisz TERAZ:',
+                'subtitle-missing': 'Dania z brakującymi składnikami:',
+                'section3-title': '3. Baza Przepisów',
+                'missing-text': 'Brakuje:',
+                'ready-text': 'Wszystko masz!',
+                'no-ingredients': 'Brak zaznaczonych składników.',
+                'no-ingredients-found': 'Brak propozycji na podstawie Twoich składników.'
+            },
+            'en': {
+                'header-slogan': 'Enter your ingredients and see what you can cook!',
+                'section1-title': '1. What do you have in the fridge?',
+                'button-select': 'Select what you have at home',
+                'subtitle-zapasy': 'Current stock:',
+                'modal-title': 'Select your ingredients:',
+                'button-done': 'Done',
+                'section2-title': '2. What can you make?',
+                'subtitle-ready': 'Dishes you can make NOW:',
+                'subtitle-missing': 'Dishes with missing ingredients:',
+                'section3-title': '3. Recipe Database',
+                'missing-text': 'Missing:',
+                'ready-text': 'You have everything!',
+                'no-ingredients': 'No ingredients selected.',
+                'no-ingredients-found': 'No suggestions found based on your ingredients.'
+            }
+        };
+        
+        let aktualnyJezyk = 'pl';
+
+        // 1. STAŁA BAZA WSZYSTKICH MOŻLIWYCH SKŁADNIKÓW (ROZSZERZONA)
+        const WSZYSTKIE_SKLADNIKI = [
+            "Jajka", "Masło", "Sól", "Mleko", "Mąka", "Cukier", 
+            "Chleb", "Ser", "Cebula", "Papryka", "Makaron", "Mięso mielone", 
+            "Pomidory", "Olej", "Czosnek", "Zioła", "Ryż", "Kurczak", "Jogurt", "Ogórek",
+            "Marchew", "Ziemniaki", "Brokuł", "Kawa", "Herbata", "Banan", "Jabłko", 
+            "Woda", "Przyprawy", "Czekolada", "Śmietana", "Pieczarki", "Szynka", "Musztarda"
+        ];
+
+        // 2. BAZA DANYCH PRZEPISÓW (ROZSZERZONA)
+        const PRZEZEPISY_BAZA = [
+            { 
+                nazwa: {pl: "Jajecznica", en: "Scrambled Eggs"}, 
+                wymagane: ["Jajka", "Masło", "Sól"], 
+                instrukcja: {pl: "Rozbij jajka, rozpuść masło, smaż. Idealne na szybkie śniadanie.", en: "Crack the eggs, melt the butter, fry. Perfect for a quick breakfast."} 
+            },
+            { 
+                nazwa: {pl: "Naleśniki", en: "Pancakes"}, 
+                wymagane: ["Jajka", "Mleko", "Mąka", "Cukier"], 
+                instrukcja: {pl: "Wymieszaj składniki na gładkie ciasto i smaż na cienko. Podawaj z dżemem lub serem.", en: "Mix the ingredients into a smooth batter and fry thin. Serve with jam or cheese."} 
+            },
+            { 
+                nazwa: {pl: "Kanapka z Serem", en: "Cheese Sandwich"}, 
+                wymagane: ["Chleb", "Ser", "Masło"], 
+                instrukcja: {pl: "Najprostszy posiłek na świecie. Smaruj, kładź, jedz.", en: "The simplest meal in the world. Spread, place, eat."} 
+            },
+            { 
+                nazwa: {pl: "Omlet Warzywny", en: "Vegetable Omelette"}, 
+                wymagane: ["Jajka", "Cebula", "Papryka", "Ser"], 
+                instrukcja: {pl: "Idealny na szybki obiad. Usmaż warzywa, zalej jajkami i posyp serem.", en: "Perfect for a quick lunch. Fry vegetables, pour eggs over them and sprinkle with cheese."} 
+            },
+            { 
+                nazwa: {pl: "Spaghetti Bolognese", en: "Spaghetti Bolognese"}, 
+                wymagane: ["Makaron", "Mięso mielone", "Pomidory", "Cebula", "Czosnek", "Olej"], 
+                instrukcja: {pl: "Klasyk! Smaż mięso z warzywami, dodaj pomidory i podawaj z makaronem.", en: "A classic! Fry meat with vegetables, add tomatoes, and serve with pasta."} 
+            },
+            { 
+                nazwa: {pl: "Ryż z Kurczakiem", en: "Rice with Chicken"}, 
+                wymagane: ["Ryż", "Kurczak", "Cebula", "Olej"], 
+                instrukcja: {pl: "Szybki, sycący obiad. Smaż kurczaka z cebulą i podawaj z ugotowanym ryżem.", en: "A quick, filling dinner. Fry chicken with onion and serve with cooked rice."} 
+            },
+            { 
+                nazwa: {pl: "Zupa Pomidorowa", en: "Tomato Soup"}, 
+                wymagane: ["Pomidory", "Cebula", "Olej", "Makaron"], 
+                instrukcja: {pl: "Podduś cebulę, dodaj pomidory i wodę. Dopraw. Podawaj z makaronem.", en: "Sauté onion, add tomatoes and water. Season. Serve with pasta."} 
+            },
+            { 
+                nazwa: {pl: "Ryż z Warzywami", en: "Rice with Vegetables"}, 
+                wymagane: ["Ryż", "Marchew", "Brokuł", "Olej"], 
+                instrukcja: {pl: "Ugotuj ryż. Podsmaż warzywa na oleju. Wymieszaj i dopraw do smaku.", en: "Cook rice. Sauté vegetables in oil. Mix and season to taste."} 
+            },
+            { 
+                nazwa: {pl: "Tosty z Serem i Szynką", en: "Grilled Cheese and Ham"}, 
+                wymagane: ["Chleb", "Ser", "Szynka", "Masło"], 
+                instrukcja: {pl: "Przygotuj kanapki z serem i szynką. Smaż na maśle, aż będą złociste.", en: "Prepare sandwiches with cheese and ham. Fry in butter until golden."} 
+            }
+        ];
+
+        // Usunięto stałą API_SIMULATION_RESULTS
+
+        // Tablica, w której przechowujemy ZAZNACZONE SKŁADNIKI (PUSTA NA START)
+        let skladnikiWLodowce = [];
+        
+        
+        // FUNKCJE OBSŁUGUJĄCE MODALNE OKNO
+        
+        function otworzListeWyboru() {
+            const modal = document.getElementById('modal-wyboru-skladnikow');
+            modal.classList.remove('hidden-modal');
+            generujOpcjeSkladnikow(); 
+        }
+
+        function zamknijListeWyboru() {
+            const modal = document.getElementById('modal-wyboru-skladnikow');
+            modal.classList.add('hidden-modal');
+            pobierzZaznaczoneSkladniki(); 
+        }
+
+        function generujOpcjeSkladnikow() {
+            const opcjeDiv = document.getElementById('opcje-skladnikow');
+            opcjeDiv.innerHTML = ''; 
+
+            WSZYSTKIE_SKLADNIKI.forEach(skladnik => {
+                const label = document.createElement('label');
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.value = skladnik;
+                checkbox.id = `check-${skladnik}`;
+                if (skladnikiWLodowce.includes(skladnik)) {
+                    checkbox.checked = true;
+                }
+
+                label.appendChild(checkbox);
+                label.append(` ${skladnik}`);
+                opcjeDiv.appendChild(label);
+            });
+        }
+
+        function pobierzZaznaczoneSkladniki() {
+            skladnikiWLodowce = [];
+            const checkboxy = document.querySelectorAll('#opcje-skladnikow input[type="checkbox"]:checked');
+            
+            checkboxy.forEach(checkbox => {
+                skladnikiWLodowce.push(checkbox.value);
+            });
+            aktualizujListeLodowki();
+            odswiezSugerowaneDania();
+        }
+
+        function aktualizujListeLodowki() {
+            const listaHTML = document.getElementById('skladniki-w-lodowce');
+            listaHTML.innerHTML = ''; 
+
+            if (skladnikiWLodowce.length === 0) {
+                listaHTML.innerHTML = `<li>${TRANSLATIONS[aktualnyJezyk]['no-ingredients']}</li>`;
+                return;
+            }
+
+            skladnikiWLodowce.forEach(skladnik => {
+                const li = document.createElement('li');
+                li.textContent = skladnik;
+                listaHTML.appendChild(li);
+            });
+        }
+        
+        function odswiezSugerowaneDania() {
+            // Składniki, które ma użytkownik
+            const maUzytkownik = skladnikiWLodowce; 
+
+            const gotoweLista = document.getElementById('dania-gotowe');
+            const brakujaceLista = document.getElementById('dania-brakujace');
+            gotoweLista.innerHTML = '';
+            brakujaceLista.innerHTML = '';
+
+            const lang = aktualnyJezyk;
+            const brakujaceTekst = TRANSLATIONS[lang]['missing-text'];
+
+            // --------------------------------------------------------
+            // 1. ANALIZA TYLKO STATYCZNEJ BAZY PRZEPISÓW (PRZEZEPISY_BAZA)
+            // --------------------------------------------------------
+            PRZEZEPISY_BAZA.forEach(przepis => {
+                const wymagane = przepis.wymagane;
+                // Znajdujemy brakujące składniki poprzez filtrowanie
+                const braki = wymagane.filter(skladnik => !maUzytkownik.includes(skladnik));
+                
+                const nazwaDania = przepis.nazwa[lang];
+                // Używamy nazwy w PL jako ID dla linku do instrukcji w Sekcji 3
+                const idPrzepisu = przepis.nazwa['pl'].replace(/\s/g, '-'); 
+                
+                const li = document.createElement('li');
+                
+                // Tworzymy link (<a>) z atrybutem href, który wskazuje na artykuł w sekcji 3
+                li.innerHTML = `<a href="#${idPrzepisu}">${nazwaDania}</a>`; 
+
+                if (braki.length === 0) {
+                    // Danie gotowe: Użytkownik ma wszystko
+                    li.innerHTML += ` (${TRANSLATIONS[lang]['ready-text']})`;
+                    gotoweLista.appendChild(li);
+                } else if (braki.length <= 2) {
+                    // Danie z brakami (do 2 szt.)
+                    li.innerHTML += ` (${brakujaceTekst} ${braki.join(', ')})`;
+                    brakujaceLista.appendChild(li);
+                }
+            });
+
+            // --------------------------------------------------------
+            // 2. OBSŁUGA BRAKU PROPOZYCJI
+            // --------------------------------------------------------
+            if (gotoweLista.children.length === 0 && brakujaceLista.children.length === 0) {
+                gotoweLista.innerHTML = `<li>${TRANSLATIONS[lang]['no-ingredients-found']}</li>`;
+            }
+        }
+        
+        function zmienJezyk(lang) {
+            if (aktualnyJezyk === lang) return;
+            // 1. Zmiana aktywnego przycisku
+            document.getElementById(`lang-${aktualnyJezyk}`).classList.remove('active-lang');
+            document.getElementById(`lang-${lang}`).classList.add('active-lang');
+            aktualnyJezyk = lang;
+            
+            // 2. Tłumaczenie statycznych elementów
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (TRANSLATIONS[lang] && TRANSLATIONS[lang][key]) {
+                    element.textContent = TRANSLATIONS[lang][key];
+                }
+            });
+            // 3. Wymagane jest ponowne generowanie dynamicznych elementów
+            odswiezSugerowaneDania();
+            aktualizujBazePrzepisowHTML(); 
+            aktualizujListeLodowki();
+        }
+
+        // Tłumaczenie statycznej bazy przepisów w HTML (Sekcja 3)
+        function aktualizujBazePrzepisowHTML() {
+            const lang = aktualnyJezyk;
+            PRZEZEPISY_BAZA.forEach(przepis => {
+                const id = przepis.nazwa['pl'].replace(/\s/g, '-'); 
+                const article = document.getElementById(id);
+
+                if (article) {
+                    article.querySelector('h3').textContent = przepis.nazwa[lang];
+                  
+                    const instrukcjaParagraf = article.querySelectorAll('p')[1];
+                    if (instrukcjaParagraf) {
+                        instrukcjaParagraf.textContent = `Instrukcja: ${przepis.instrukcja[lang]}`;
+                    }
+                }
+            });
+        }
+        
+        // FUNKCJA: Symulacja licznika aktywnych użytkowników
+        function symulujLicznik() {
+            const min = 100;
+            const max = 499;
+            const losowaLiczba = Math.floor(Math.random() * (max - min + 1)) + min;
+            
+            const licznikElement = document.getElementById('counter-value');
+            if (licznikElement) {
+                licznikElement.textContent = losowaLiczba;
+            }
+        }
+
+        // FUNKCJA: Ustawienie ikon graficznych zależnych od pory roku
+        function ustawSezonoweTlo() {
+            const dzisiaj = new Date();
+            const miesiac = dzisiaj.getMonth() + 1; // 1 (styczeń) do 12 (grudzień)
+            let lewaIkona = '❄️'; // Domyślnie Zima
+            let prawaIkona = '🧅'; // Domyślnie Zima
+
+            if (miesiac >= 3 && miesiac <= 5) {
+                // WIOSNA (Marzec, Kwiecień, Maj)
+                lewaIkona = '🌱';
+                prawaIkona = '🍓';
+            } else if (miesiac >= 6 && miesiac <= 8) {
+                // LATO (Czerwiec, Lipiec, Sierpień)
+                lewaIkona = '🌞';
+                prawaIkona = '🍉';
+            } else if (miesiac >= 9 && miesiac <= 11) {
+                // JESIEŃ (Wrzesień, Październik, Listopad)
+                lewaIkona = '🍂';
+                prawaIkona = '🍄';
+            } 
+            // W przeciwnym razie pozostają ikony Zimowe
+
+            const kontener = document.getElementById('sezonowe-ikony');
+            if(kontener) {
+                kontener.innerHTML = `<span>${lewaIkona}</span><span>${prawaIkona}</span>`;
+            }
+        }
+
+        // INICJALIZACJA
+        document.addEventListener('DOMContentLoaded', () => {
+            symulujLicznik(); 
+            ustawSezonoweTlo(); 
+            zmienJezyk('pl');
+            generujOpcjeSkladnikow(); 
+            aktualizujListeLodowki(); 
+            odswiezSugerowaneDania(); 
+        });
+    </script>
+</body>
+</html>
